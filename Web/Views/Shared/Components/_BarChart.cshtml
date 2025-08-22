@@ -4,7 +4,10 @@
 }
 
 <div class="card">
-    <div class="card-header">Monthly Investment</div>
+    @if (!string.IsNullOrEmpty(Model.Title))
+    {
+        <div class="card-header">@Model.Title</div>
+    }
     <div class="card-body">
         <canvas id="@chartId" class="chart-canvas"></canvas>
     </div>
