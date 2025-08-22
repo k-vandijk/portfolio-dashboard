@@ -16,37 +16,48 @@
 
     var tableViewModel = new TableViewModel
     {
-        Title = "Portfolio",
         Columns =
         [
-            new TableColumn { Header = "Datum", Key = "Date" },
-            new TableColumn { Header = "Bedrag", Key = "Amount" },
-            new TableColumn { Header = "Type", Key = "Type" },
-            new TableColumn { Header = "Omschrijving", Key = "Description" }
+            new TableColumn { Header = "Ticker", Key = "Ticker" },
+            new TableColumn { Header = "Portfoliogedeelte", Key = "PortfolioPercentage" },
+            new TableColumn { Header = "Aantal", Key = "Amount" },
+            new TableColumn { Header = "Totale investering", Key = "TotalInvestment" },
+            new TableColumn { Header = "Waarde", Key = "Worth" },
+            new TableColumn { Header = "Winst €", Key = "ProfitAmount" },
+            new TableColumn { Header = "Winst %", Key = "ProfitPercentage" }
         ],
         Rows =
         [
             new Dictionary<string, object>
             {
-                { "Date", "2023-01-01" },
-                { "Amount", 1000 },
-                { "Type", "Inleg" },
-                { "Description", "Initiële investering" }
+                { "Ticker", "SXRV.DE" },
+                { "PortfolioPercentage", "72,81%" },
+                { "Amount", "7,81206400" },
+                { "TotalInvestment", "€ 8.055,07" },
+                { "Worth", "€ 9.005,75" },
+                { "ProfitAmount", "€ 950,68" },
+                { "ProfitPercentage", "11,80%" },
             }!,
             new Dictionary<string, object>
             {
-                { "Date", "2023-02-15" },
-                { "Amount", -200 },
-                { "Type", "Uitgave" },
-                { "Description", "Aankoop aandelen" }
+                { "Ticker", "SXRV.DE" },
+                { "PortfolioPercentage", "72,81%" },
+                { "Amount", "7,81206400" },
+                { "TotalInvestment", "€ 8.055,07" },
+                { "Worth", "€ 9.005,75" },
+                { "ProfitAmount", "€ 950,68" },
+                { "ProfitPercentage", "11,80%" },
             }!,
             new Dictionary<string, object>
             {
-                { "Date", "2023-03-10" },
-                { "Amount", 300 },
-                { "Type", "Inleg" },
-                { "Description", "Extra inleg" }
-            }!
+                { "Ticker", "SXRV.DE" },
+                { "PortfolioPercentage", "72,81%" },
+                { "Amount", "7,81206400" },
+                { "TotalInvestment", "€ 8.055,07" },
+                { "Worth", "€ 9.005,75" },
+                { "ProfitAmount", "€ 950,68" },
+                { "ProfitPercentage", "11,80%" },
+            }!,
         ]
     };
 }

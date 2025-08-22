@@ -1,7 +1,10 @@
 ﻿@model TableViewModel
 
 <div class="card">
-    <div class="card-header">@Model.Title</div>
+    @if (!string.IsNullOrEmpty(Model.Title))
+    {
+        <div class="card-header">@Model.Title</div>
+    }
     <div class="card-body">
         <table class="table table-hover table-sm mb-0">
             <thead class="table-light">
