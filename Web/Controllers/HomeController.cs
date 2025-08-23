@@ -1,5 +1,7 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
+using System.Diagnostics;
+using System.Text.Json;
 using Web.Responses;
 using Web.ViewModels;
 
@@ -9,11 +11,13 @@ public class HomeController : Controller
 {
     private readonly HttpClient _http;
     private readonly IConfiguration _config;
+    private readonly IMemoryCache _cache;
 
-    public HomeController(HttpClient http, IConfiguration config)
+    public HomeController(HttpClient http, IConfiguration config, IMemoryCache cache)
     {
         _http = http;
         _config = config;
+        _cache = cache;
     }
 
     [HttpGet("/dashboard")]
@@ -29,35 +33,58 @@ public class HomeController : Controller
     }
 
     [HttpGet("/market-history")]
-    public async Task<IActionResult> MarketHistory()
+    public async Task<IActionResult> MarketHistory([FromQuery] string? ticker = "SXRV.DE")
     {
-        var viewModel = await GetMarketHistoryViewModelAsync("SXRV.DE");
+        var marketHistoryData = await GetMarketHistoryResponseAsync(ticker);
+        if (marketHistoryData == null)
+        {
+            return NotFound();
+        }
+
+        var viewModel = GetMarketHistoryViewModel(marketHistoryData);
 
         return View(viewModel);
     }
 
-    public async Task<MarketHistoryResponse> GetMarketHistoryResponseAsync(string ticker)
+    // TODO Seperate caching logic from this method
+    private async Task<MarketHistoryResponse?> GetMarketHistoryResponseAsync(
+        string ticker, 
+        string? period = "1y", 
+        string? interval = "1d")
     {
-        var tickerApiUrl = _config["ticker-api-url"] ?? throw new InvalidOperationException("Ticker API URL is not configured.");
-        var tickerApiCode = _config["ticker-api-code"] ?? throw new InvalidOperationException("Ticker API code is not configured.");
-        var requestUrl = $"{tickerApiUrl}/get_history?code={tickerApiCode}&ticker={ticker}&period=2y&interval=1d";
+        var cacheKey = $"market-history:{ticker}:{period}:{interval}";
+        if (_cache.TryGetValue(cacheKey, out MarketHistoryResponse cached))
+        {
+            return cached;
+        }
+
+        var tickerApiUrl = _config["ticker-api-url"] ?? throw new InvalidOperationException("ticker-api-url is not configured.");
+        var tickerApiCode = _config["ticker-api-code"] ?? throw new InvalidOperationException("ticker-api-code is not configured.");
+        var requestUrl = $"{tickerApiUrl}/get_history?code={tickerApiCode}&ticker={ticker}&period={period}&interval={interval}";
 
         var response = await _http.GetAsync(requestUrl);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
-        var marketHistory = System.Text.Json.JsonSerializer.Deserialize<MarketHistoryResponse>(responseContent, new System.Text.Json.JsonSerializerOptions
+        var marketHistory = JsonSerializer.Deserialize<MarketHistoryResponse>(responseContent, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true
         });
 
+        if (marketHistory is not null)
+        {
+            var options = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(TimeSpan.FromMinutes(10))
+                .SetSlidingExpiration(TimeSpan.FromMinutes(3));
+
+            _cache.Set(cacheKey, marketHistory, options);
+        }
+
         return marketHistory;
     }
 
-    public async Task<LineChartViewModel> GetMarketHistoryViewModelAsync(string ticker)
+    private LineChartViewModel GetMarketHistoryViewModel(MarketHistoryResponse marketHistory)
     {
-        var marketHistory = await GetMarketHistoryResponseAsync(ticker);
-
         var viewModel = new LineChartViewModel
         {
             Title = "Market history",

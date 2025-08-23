@@ -13,14 +13,30 @@
 
     decimal interestPercentage = interest / first.Value * 100;
     string interestPercentageString = interestPercentage.ToString("F2") + "%";
+
+    var tickers = new[] { "SXRV.DE", "BTC-EUR", "IS3N.DE" };
+    var currentTicker = Context.Request.Query["ticker"].ToString();
 }
 
-<div class="row mb-3" style="height: 35vh;">
+<div class="row mb-3" style="height: 15vh;">
     <div class="col-md-4">
-        <div class="card"></div>
+        <div class="card">
+            <div class="card-header">Tickers</div>
+            <div class="card-body d-flex align-items-center">
+                <div class="btn-group w-100" role="group">
+                    @foreach (var t in tickers)
+                    {
+                        <a asp-controller="Home" asp-action="MarketHistory" asp-route-ticker="@t"
+                           class="btn btn-ticker px-3 py-2 @(t == currentTicker ? "active" : "")">
+                            @t
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="col-md-8">
-        <div class="row">
+    <div class="col-md-8 d-flex">
+        <div class="row flex-fill">
             <div class="col-md-4">
                 <partial name="Components/_Metric" model='new MetricViewModel { Title = "Current price", Value = currentPriceString }' />
             </div>
@@ -32,9 +48,10 @@
             </div>
         </div>
     </div>
+
 </div>
 
-<div class="row mb-3" style="height: 60vh;">
+<div class="row mb-3" style="height: 80vh;">
     <div class="col-md-12">
         <partial name="Components/_LineChart" model="Model" />
     </div>
