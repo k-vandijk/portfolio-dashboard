@@ -37,34 +37,19 @@
     };
 }
 
-<style>
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: 1fr 1fr;
-        gap: 1rem;
-        flex: 1 1 auto;
-        min-height: 0;
-    }
-
-        .dashboard-grid > div {
-            display: flex;
-            align-items: stretch;
-            justify-content: stretch;
-            min-height: 0;
-        }
-</style>
-
-<div class="dashboard-grid">
-    <div>
+<div class="row mb-3" style="height: 45vh; overflow: hidden;">
+    <div class="col-md-6">
     </div>
-    <div>
+    <div class="col-md-6">
         <partial name="Components/_PieChart" model="pieChartViewModel" />
     </div>
-    <div>
-        <partial name="Components/_LineChart" model="lineChartViewModel"/>
+</div>
+
+<div class="row mb-3" style="height: 45vh; overflow: hidden;">
+    <div class="col-md-6">
+        <partial name="Components/_LineChart" model="lineChartViewModel" />
     </div>
-    <div>
+    <div class="col-md-6">
         <partial name="Components/_BarChart" model="barChartViewModel" />
     </div>
 </div>
