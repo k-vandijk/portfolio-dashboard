@@ -52,7 +52,28 @@ hr {
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     font-weight: bold;
-
-    /*border-bottom: 3px solid rgba(71, 59, 240, 0.3);*/ /* Accent-1 maar 30% zichtbaar */
-    /*margin: 0 1rem;*/
 }
+
+/* Button styling */
+.btn-ticker {
+    border-radius: var(--card-radius);
+    border: none;
+    background: var(--card-color);
+    color: var(--accent-1);
+    font-weight: bold;
+    transition: all 0.2s ease-in-out;
+}
+
+    .btn-ticker:hover {
+        background: var(--accent-1-light);
+        box-shadow: var(--shadow-hover);
+        color: var(--accent-1);
+    }
+
+    .btn-ticker.active,
+    .btn-ticker:focus,
+    .btn-ticker:active {
+        background: var(--accent-1);
+        color: #fff;
+        box-shadow: var(--shadow-hover);
+    }

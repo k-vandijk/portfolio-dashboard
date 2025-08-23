@@ -1,4 +1,6 @@
-﻿namespace Web.Responses;
+﻿using System.Text.Json.Serialization;
+
+namespace Web.Responses;
 
 public class MarketHistoryResponse
 {
@@ -14,7 +16,8 @@ public class MarketHistoryDataPoint
     public decimal High { get; set; }
     public decimal Low { get; set; }
     public decimal Close { get; set; }
-    public int Volume { get; set; }
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)] // Volume can be huge; also allow reading from JSON strings if the API sends "123456789"
+    public long? Volume { get; set; }
     public decimal Dividends { get; set; }
     public decimal StockSplits { get; set; }
     public decimal CapitalGains { get; set; }
