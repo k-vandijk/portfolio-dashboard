@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Web.MappingProfiles;
 using Web.Middleware;
+using Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddHttpClient("cached-http-client")
 
 builder.Services.AddAutoMapper(cfg => 
     cfg.AddProfile<TransactionProfile>());
+
+builder.Services.AddScoped<AzureTableService>();
 
 var app = builder.Build();
 

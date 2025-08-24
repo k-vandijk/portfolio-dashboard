@@ -1,56 +1,38 @@
-﻿@{
+﻿@model InvestmentViewModel
+@{
     ViewData["Title"] = "Investment";
 
-    var lineChartViewModel = new LineChartViewModel
-    {
-        Title = "Investment (cumulative) per month",
-        DataPoints =
-        [
-            new LineChartDataPoint { Label = "Jan", Value = 100 },
-            new LineChartDataPoint { Label = "Feb", Value = 200 },
-            new LineChartDataPoint { Label = "Mar", Value = 400 },
-            new LineChartDataPoint { Label = "Apr", Value = 300 },
-            new LineChartDataPoint { Label = "May", Value = 600 },
-        ]
-    };
-
-    var pieChartViewModel = new PieChartViewModel
-    {
-        Title = "Investment per ticker",
-        Data =
-        [
-            new PieChartDataPoint { Label = "Stocks", Value = 50 },
-            new PieChartDataPoint { Label = "Bonds", Value = 30 },
-            new PieChartDataPoint { Label = "Real Estate", Value = 20 },
-        ]
-    };
-
-    var barChartViewModel = new BarChartViewModel
-    {
-        Title = "Investment per month",
-        DataPoints =
-        [
-            new BarChartDataPoint { Label = "Stocks", Value = 50 },
-            new BarChartDataPoint { Label = "Bonds", Value = 30 },
-            new BarChartDataPoint { Label = "Real Estate", Value = 20 },
-        ]
-    };
+    var tickers = new[] { "SXRV.DE", "BTCEUR", "IS3N.DE" };
+    var currentTickers = Context.Request.Query["tickers"].ToString().ToLower().Split(",");
 }
 
 <div class="row mb-3" style="height: 47vh;">
     <div class="col-md-6">
-        <div class="card"></div>
+        <div class="card">
+            <div class="card-header">Tickers</div>
+            <div class="card-body d-flex align-items-center">
+                <div class="btn-group w-100" role="group">
+                    @foreach (var t in tickers)
+                    {
+                        <a asp-controller="Investment" asp-action="Investment" asp-route-tickers="@t"
+                           class="btn btn-ticker px-3 py-2 @(currentTickers.Contains(t.ToLower()) ? "active" : "")">
+                            @t
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
     <div class="col-md-6">
-        <partial name="Components/_PieChart" model="pieChartViewModel" />
+        <partial name="Components/_PieChart" model="Model.PieChart" />
     </div>
 </div>
 
 <div class="row mb-3" style="height: 48vh;">
     <div class="col-md-6">
-        <partial name="Components/_LineChart" model="lineChartViewModel" />
+        <partial name="Components/_LineChart" model="Model.LineChart" />
     </div>
     <div class="col-md-6">
-        <partial name="Components/_BarChart" model="barChartViewModel" />
+        <partial name="Components/_BarChart" model="Model.BarChart" />
     </div>
 </div>
