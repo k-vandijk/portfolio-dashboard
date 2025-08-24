@@ -1,41 +1,22 @@
-﻿using AutoMapper;
-using Azure;
-using Azure.Data.Tables;
-using Microsoft.AspNetCore.Mvc;
-using Web.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Web.Services;
 
 namespace Web.Controllers;
 
 public class TransactionsController : Controller
 {
-    private readonly IConfiguration _configuration;
-    private readonly IMapper _mapper;
+    private readonly AzureTableService _service;
 
-    public TransactionsController(IConfiguration configuration, IMapper mapper)
+    public TransactionsController(AzureTableService service)
     {
-        _configuration = configuration;
-        _mapper = mapper;
+        _service = service;
     }
 
     [HttpGet("/transactions")]
     public IActionResult Transactions()
     {
-        var transactions = GetTransactions();
+        var transactions = _service.GetTransactions();
 
         return View(transactions);
-    }
-
-    private List<Transaction> GetTransactions()
-    {
-        string connectionString = _configuration["transactions-table-connection-string"] ?? throw new InvalidOperationException("transactions-table-connection-string is not configured.");
-
-        var serviceClient = new TableServiceClient(connectionString);
-        var tableClient = serviceClient.GetTableClient("transactions");
-
-        Pageable<TransactionEntity> transactions = tableClient.Query<TransactionEntity>(
-            filter: "PartitionKey eq 'transactions'"
-        );
-
-        return _mapper.Map<List<Transaction>>(transactions.ToList()).OrderBy(t => t.Date).ToList();
     }
 }
