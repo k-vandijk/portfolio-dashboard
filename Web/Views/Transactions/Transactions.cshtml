@@ -1,6 +1,7 @@
 ﻿@model List<Transaction>
 @{
     ViewData["Title"] = "Transactions";
+    string todayString = DateTime.Today.ToString("yyyy-MM-dd");
 }
 
 <div class="row mb-3" style="height: 95vh;">
@@ -21,7 +22,16 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @for (int i = 0; i < Model.Count; i++)
+                        <tr>
+                            <td></td>
+                            <td><input class="form-control" id="dateInput" value="@todayString" /></td>
+                            <td><input class="form-control" id="tickerInput" /></td>
+                            <td><input class="form-control" id="amountInput" type="text" /></td>
+                            <td><input class="form-control" id="purchasePriceInput" type="text" /></td>
+                            <td><input class="form-control" id="transactionCostsInput" type="text" /></td>
+                            <td><input class="form-control" id="totalCostsInput" readonly /></td>
+                        </tr>
+                        @for (int i = Model.Count - 1; i >= 0; i--)
                         {
                             <tr>
                                 <td>@(i + 1)</td>
@@ -47,11 +57,67 @@
             $('#transactionsTable').DataTable({
                 "paging": true,
                 "searching": true,
-                "ordering": true,
+                "ordering": false,
                 "pageLength": 15,
                 "lengthChange": false,
-                "order": [[0, 'asc']]
+                "order": [[0, 'desc']]
             });
+
+            ['amountInput', 'purchasePriceInput', 'transactionCostsInput'].forEach(id => {
+                const input = document.getElementById(id);
+                input.addEventListener('input', calcTotal);
+                input.addEventListener('change', calcTotal);
+                input.addEventListener('blur', calcTotal);
+                input.addEventListener('keyup', calcTotal);
+            });
+
+            ['dateInput','tickerInput','amountInput','purchasePriceInput','transactionCostsInput','totalCostsInput']
+                .forEach(id => {
+                    document.getElementById(id).addEventListener('keydown', function (e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            const entity = buildEntity();
+
+                            console.log('Transaction entity:', entity);
+
+                            clearInputs();
+                            document.getElementById('dateInput').focus();x
+                        }
+                    });
+                });
         });
+
+        function calcTotal() {
+            const amount = parseFloat(document.getElementById('amountInput').value.replace(',', '.')) || 0;
+            const price = parseFloat(document.getElementById('purchasePriceInput').value.replace(',', '.')) || 0;
+            const costs = parseFloat(document.getElementById('transactionCostsInput').value.replace(',', '.')) || 0;
+
+            const total = amount * price + costs;
+            document.getElementById('totalCostsInput').value = total.toLocaleString('nl-NL', {
+                style: 'currency',
+                currency: 'EUR'
+            });
+            return total;
+        }
+
+        function buildEntity() {
+            const entity = {
+                Date: document.getElementById('dateInput').value || null,
+                Ticker: (document.getElementById('tickerInput').value || '').trim() || null,
+                Amount: document.getElementById('amountInput').value || '0',
+                PurchasePrice: document.getElementById('purchasePriceInput').value || '0',
+                TransactionCosts: document.getElementById('transactionCostsInput').value || '0',
+                TotalCosts: document.getElementById('totalCostsInput').value || '0'
+            };
+
+            return entity;
+        }
+
+        function clearInputs() {
+            ['dateInput','tickerInput','amountInput','purchasePriceInput','transactionCostsInput','totalCostsInput']
+                .forEach(id => document.getElementById(id).value = '');
+
+            // TODO set date to todayString
+        }
     </script>
 }
