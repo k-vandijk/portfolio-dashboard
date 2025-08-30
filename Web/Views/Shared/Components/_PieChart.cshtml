@@ -29,8 +29,22 @@
             }
         }));
 
+        const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+
         // Css variables ophalen
         chartData.datasets[0].backgroundColor = accentColors;
+
+        // Formatting from ViewModel
+        const yFormat = @Html.Raw(JsonSerializer.Serialize(Model.Format)); // "currency" | "percentage" | "number"
+
+        const fmtCurrency = new Intl.NumberFormat('nl-NL', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const fmtNumber = new Intl.NumberFormat('nl-NL', { maximumFractionDigits: 2 });
+
+        function formatY(v) {
+            if (yFormat === 'currency') return fmtCurrency.format(v);
+            if (yFormat === 'percentage') return fmtNumber.format(v) + '%';
+            return fmtNumber.format(v);
+        }
 
         // Chart initialiseren
         new Chart(element, {
@@ -39,7 +53,18 @@
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { position: 'bottom' } }
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            label: (ctx) => {
+                                const value = ctx.parsed;
+                                const pct = total > 0 ? (value / total * 100) : 0;
+                                return `${formatY(value)} (${fmtNumber.format(pct)}%)`;
+                            }
+                        }
+                    }
+                }
             }
         });
     }
