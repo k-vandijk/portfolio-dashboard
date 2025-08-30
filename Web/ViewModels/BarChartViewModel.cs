@@ -4,6 +4,7 @@ public class BarChartViewModel
 {
     public string Title { get; set; } = string.Empty;
     public List<BarChartDataPoint> DataPoints { get; set; } = new ();
+    public string Format { get; set; } = "currency"; // "currency" | "percentage" | "number"
 }
 
 public class BarChartDataPoint
