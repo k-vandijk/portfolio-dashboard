@@ -18,10 +18,10 @@ public class InvestmentController : Controller
     [HttpGet("/investment")]
     public IActionResult Investment(
         [FromQuery] string? tickers, 
-        [FromQuery] DateOnly? startDate, 
-        [FromQuery] DateOnly? endDate)
+        [FromQuery] string? timerange)
     {
         var transactions = _service.GetTransactions();
+        var (startDate, endDate) = FilterHelper.GetMinMaxDatesFromTimeRange(timerange ?? "ALL");
         var filteredTransactions = FilterHelper.FilterTransactions(transactions, tickers, startDate, endDate);
 
         var pieChartViewModel = GetPieChartViewModel(filteredTransactions);

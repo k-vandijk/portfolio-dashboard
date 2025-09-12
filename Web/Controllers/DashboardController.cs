@@ -26,7 +26,7 @@ public class DashboardController : Controller
         [FromQuery] string? timerange = null)
     {
         var transactions = _azureTableService.GetTransactions();
-        var filteredTransactions = FilterHelper.FilterTransactions(transactions, tickers, null, null);
+        var filteredTransactions = FilterHelper.FilterTransactions(transactions, tickers);
 
         // Named tx because tickers it already used as parameter name
         var tx = filteredTransactions
