@@ -8,7 +8,7 @@ public static class FilterHelper
 {
     public static readonly string[] TIMERANGES = new[] { "1W", "1M", "3M", "YTD", "ALL" };
 
-    public static List<Transaction> FilterTransactions(List<Transaction> transactions, string? tickers, DateOnly? startDate, DateOnly? endDate)
+    public static List<Transaction> FilterTransactions(List<Transaction> transactions, string? tickers, DateOnly? startDate = null, DateOnly? endDate = null)
     {
         if (!string.IsNullOrWhiteSpace(tickers))
         {
