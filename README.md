@@ -1,1 +1,1 @@
-![alt text](_assets/preview.png)
+# ticker-api-dashboard
