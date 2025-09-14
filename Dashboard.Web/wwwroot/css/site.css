@@ -1,22 +1,24 @@
 ﻿:root {
-    --accent-1: #473BF0;
-    --accent-2: #6665DD;
-    --accent-3: #9B9ECE;
-    --accent-4: #ACADBC;
+    --accent-1: #0F6CBD; /* brand primary */
+    --accent-2: #115EA3; /* darker brand */
+    --accent-3: #2886DE; /* lighter/secondary brand */
+    --accent-4: #8A8886; /* muted neutral accent */
 
-    --accent-1-light: #d5d1fa;
-    --accent-2-light: #c7c6f0;
-    --accent-3-light: #dcddea;
-    --accent-4-light: #ececf3;
+    --accent-1-light: #EBF3FC; /* brand wash for subtle backgrounds */
+    --accent-4-light: #FAFAFA; /* neutral wash for gradients */
 
-    --card-color: #ffffff;
-    --card-radius: 16px;
+    --card-color: #F5F5F5; /* DevOps-like grey card (Fluent neutralLighter) */
+    --text-color: #242424; /* Fluent neutralPrimary for body text */
+
+    --border-color: #E0E0E0; /* Fluent neutralQuaternaryAlt */
+    --border-radius: 12px;
     --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.06);
     --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.08);
 }
 
 /* Verzorgt de font en dat de pagina niet scrollable is */
-html, body {
+html,
+body {
     font-family: 'Roboto', sans-serif;
     height: 100%;
     overflow: hidden;
@@ -38,8 +40,8 @@ hr {
 /* Default styling voor cards */
 .card {
     background-color: var(--card-color);
-    border-radius: var(--card-radius);
-    border: none;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
     box-shadow: var(--shadow-default);
     height: 100%;
 }
@@ -47,8 +49,8 @@ hr {
 .card-header {
     background-color: var(--card-color);
     border: none;
-    border-top-left-radius: var(--card-radius) !important;
-    border-top-right-radius: var(--card-radius) !important;
+    border-top-left-radius: var(--border-radius) !important;
+    border-top-right-radius: var(--border-radius) !important;
     border-bottom-left-radius: 0 !important;
     border-bottom-right-radius: 0 !important;
     font-weight: bold;
@@ -56,7 +58,7 @@ hr {
 
 /* Button styling */
 .btn-ticker {
-    border-radius: var(--card-radius);
+    border-radius: var(--border-radius);
     border: none;
     background: var(--card-color);
     color: var(--accent-1);
@@ -78,6 +80,29 @@ hr {
         box-shadow: var(--shadow-hover);
     }
 
+/* Placeholder styling */
 .placeholder {
-    border-radius: var(--card-radius) !important;
+    border-radius: var(--border-radius) !important;
+}
+
+/* Sidebar styling */
+aside {
+    background-color: var(--card-color);
+    box-shadow: var(--shadow-default);
+    border-right: 1px solid var(--border-color);
+}
+
+.nav-link {
+    color: var(--text-color);
+}
+
+.nav-pills .nav-link.active {
+    background-color: var(--accent-1);
+    color: #fff !important;
+    border-radius: var(--border-radius);
+}
+
+/* Table styling */
+.table-transparent {
+    --bs-table-bg: transparent !important;
 }
