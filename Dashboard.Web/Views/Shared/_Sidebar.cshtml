@@ -1,44 +1,124 @@
 ﻿<style>
-    aside {
-        background-color: var(--card-color);
-        box-shadow: var(--shadow-default);
+    /* --- Layout and motion --- */
+    #sidebar {
+        width: 250px;
+        transition: width .25s ease;
+        height: 100vh;
     }
 
-    .nav-pills .nav-link.active {
-        background-color: var(--accent-1);
-        color: #fff !important;
+    #sidebar.collapsed {
+        width: 56px;
+        /* slim */
+        padding-left: .5rem !important;
+        padding-right: .5rem !important;
     }
 
-    .nav-pills .nav-link.active {
-        border-radius: var(--card-radius);
+    /* Toggle button */
+    #toggleSidebar {
+        position: absolute;
+        top: .5rem;
+        right: .5rem;
+        /* default: align right when expanded */
+        background: transparent;
+        border: 0;
+        padding: .25rem;
+        line-height: 1;
+        cursor: pointer;
+    }
+
+    #toggleSidebar i {
+        transition: transform .25s ease;
+    }
+
+    /* Flip the double-caret when collapsed */
+    #sidebar.collapsed #toggleSidebar i {
+        transform: rotate(180deg);
+    }
+
+    /* Hide content when collapsed; keep only the toggle button */
+    #sidebar .brand,
+    #sidebar .brand-text,
+    #sidebar .link-text {
+        white-space: nowrap;
+    }
+
+    /* remove everything except the toggle in collapsed */
+    #sidebar.collapsed .brand,
+    #sidebar.collapsed hr,
+    #sidebar.collapsed .nav {
+        display: none !important;
+    }
+
+    /* (Optional) original alignment styles kept for expanded state */
+    #sidebar .nav-link {
+        display: flex;
+        align-items: center;
+    }
+
+    #sidebar .nav-link i {
+        margin-right: .5rem;
+    }
+
+    /* Center the toggle horizontally when collapsed */
+    #sidebar.collapsed #toggleSidebar {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
     }
 </style>
 
-<aside class="px-3 py-3 flex-shrink-0" style="width:250px; height:100vh;">
-    <a asp-controller="Dashboard" asp-action="Dashboard" class="d-flex align-items-center mb-3 text-decoration-none fw-bold fs-5" style="color: var(--accent-1);">
-        Kevin van Dijk
+<aside id="sidebar" class="p-3 position-relative">
+    <button id="toggleSidebar" aria-label="Toggle sidebar" aria-controls="sidebar" aria-expanded="true" class="text-secondary">
+        <i class="fa-solid fa-angles-left"></i>
+    </button>
+
+    <a class="brand d-flex align-items-center mb-3 text-decoration-none fw-bold fs-5" style="color: var(--accent-1);">
+        <span class="brand-text">Kevin van Dijk</span>
     </a>
     <hr>
+
     <ul class="nav nav-pills flex-column">
+        
         <li class="nav-item mb-2">
-            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link text-dark @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
-                <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+            <a asp-controller="Dashboard" asp-action="Dashboard" class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Dashboard" ? "active" : "")">
+                <i class="fas fa-tachometer-alt me-2"></i>
+                <span class="link-text">Dashboard</span>
             </a>
         </li>
         <li class="nav-item mb-2">
-            <a asp-controller="Investment" asp-action="Investment" class="nav-link text-dark @(ViewContext.RouteData.Values["action"]?.ToString() == "Investment" ? "active" : "")">
-                <i class="fas fa-chart-line me-2"></i> Investment
+            <a asp-controller="Investment" asp-action="Investment" class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Investment" ? "active" : "")">
+                <i class="fas fa-chart-line me-2"></i>
+                <span class="link-text">Investment</span>
             </a>
         </li>
         <li class="nav-item">
-            <a asp-controller="MarketHistory" asp-action="MarketHistory" class="nav-link text-dark @(ViewContext.RouteData.Values["action"]?.ToString() == "MarketHistory" ? "active" : "")">
-                <i class="fas fa-clock-rotate-left me-2"></i> Market History
+            <a asp-controller="MarketHistory" asp-action="MarketHistory" class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "MarketHistory" ? "active" : "")">
+                <i class="fas fa-clock-rotate-left me-2"></i>
+                <span class="link-text">Market History</span>
             </a>
         </li>
         <li class="nav-item">
-            <a asp-controller="Transactions" asp-action="Transactions" class="nav-link text-dark @(ViewContext.RouteData.Values["action"]?.ToString() == "Transactions" ? "active" : "")">
-                <i class="fas fa-receipt me-2"></i> Transactions
+            <a asp-controller="Transactions" asp-action="Transactions" class="nav-link @(ViewContext.RouteData.Values["action"]?.ToString() == "Transactions" ? "active" : "")">
+                <i class="fas fa-receipt me-2"></i>
+                <span class="link-text">Transactions</span>
             </a>
         </li>
     </ul>
 </aside>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebar');
+
+    const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+    if (isCollapsed) {
+        sidebar.classList.add('collapsed');
+        toggleBtn.setAttribute('aria-expanded', 'false');
+    }
+
+    toggleBtn.addEventListener('click', () => {
+        const collapsed = sidebar.classList.toggle('collapsed');
+        localStorage.setItem('sidebar-collapsed', collapsed);
+        toggleBtn.setAttribute('aria-expanded', String(!collapsed));
+    });
+</script>
