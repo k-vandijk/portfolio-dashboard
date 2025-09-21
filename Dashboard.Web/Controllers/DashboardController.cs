@@ -118,28 +118,26 @@ public class DashboardController : Controller
     {
         using var scope = _scopeFactory.CreateScope();
         var api = scope.ServiceProvider.GetRequiredService<ITickerApiService>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<DashboardController>>();
 
-        using (_logger.BeginScope(new Dictionary<string, object> { ["Ticker"] = ticker }))
+        try
         {
-            try
-            {
-                _logger.LogInformation("Fetching market history...");
+            logger.LogInformation("Fetching market history for ticker {Ticker}", ticker);
 
-                var tickerApiUrl = _config["Secrets:TickerApiurl"]
-                    ?? throw new ArgumentNullException("Secrets:TickerApiurl", "Please set the TickerApiurl in the configuration.");
+            var tickerApiUrl = _config["Secrets:TickerApiurl"]
+                ?? throw new ArgumentNullException("Secrets:TickerApiurl", "Please set the TickerApiurl in the configuration.");
 
-                var tickerApiCode = _config["Secrets:TickerApiCode"]
-                    ?? throw new ArgumentNullException("Secrets:TickerApiCode", "Please set the TickerApiCode in the configuration.");
+            var tickerApiCode = _config["Secrets:TickerApiCode"]
+                ?? throw new ArgumentNullException("Secrets:TickerApiCode", "Please set the TickerApiCode in the configuration.");
 
-                var data = await api.GetMarketHistoryResponseAsync(tickerApiUrl, tickerApiCode, ticker);
-                _logger.LogInformation("Fetched market history: {HasData}", data != null);
-                return (ticker, data, null);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Failed to fetch market history");
-                return (ticker, null, ex);
-            }
+            var data = await api.GetMarketHistoryResponseAsync(tickerApiUrl, tickerApiCode, ticker);
+            logger.LogInformation("Fetched market history for ticker {Ticker} with {Count} data points", ticker, data?.History.Count ?? 0);
+            return (ticker, data, null);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Failed to fetch market history for ticker {Ticker}: {Message}", ticker, ex.Message);
+            return (ticker, null, ex);
         }
     }
 
