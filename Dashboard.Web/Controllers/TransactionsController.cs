@@ -1,6 +1,7 @@
 ﻿using Dashboard.Application.Interfaces;
 using Dashboard.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Dashboard.Web.Controllers;
 
@@ -8,21 +9,27 @@ public class TransactionsController : Controller
 {
     private readonly IAzureTableService _service;
     private readonly IConfiguration _config;
+    private readonly ILogger<TransactionsController> _logger;
 
-    public TransactionsController(IAzureTableService service, IConfiguration config)
+    public TransactionsController(IAzureTableService service, IConfiguration config, ILogger<TransactionsController> logger)
     {
         _service = service;
         _config = config;
+        _logger = logger;
     }
 
     [HttpGet("/transactions")]
     public IActionResult Transactions()
     {
+        var sw = Stopwatch.StartNew();
+
         var connectionString = _config["Secrets:TransactionsTableConnectionString"]
             ?? throw new ArgumentNullException("Secrets:TransactionsTableConnectionString", "Please set the connection string in the configuration.");
 
         var transactions = _service.GetTransactions(connectionString);
 
+        sw.Stop();
+        _logger.LogInformation("Transactions view rendered in {Elapsed} ms", sw.ElapsedMilliseconds);
         return View(transactions);
     }
 

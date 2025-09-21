@@ -4,6 +4,8 @@ using Dashboard.Infrastructure;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using Serilog;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +27,18 @@ builder.Services.AddAuthorization(o => o.FallbackPolicy = o.DefaultPolicy);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
+    .MinimumLevel.Override("System", LogEventLevel.Warning)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+// Add application services
 builder.Services.AddApplication();
 builder.Services.AddDomain();
 builder.Services.AddInfrastructure();
@@ -53,4 +67,9 @@ app.UseAuthorization();
 app.MapGet("/", () => Results.Redirect("/dashboard"));
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
 
-await app.RunAsync();
+await app.StartAsync();
+
+foreach (var a in app.Urls) Log.Information("Now listening on: {BaseUrl}", a);
+
+// keep the app running
+await app.WaitForShutdownAsync();

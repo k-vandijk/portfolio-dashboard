@@ -6,13 +6,13 @@ namespace Dashboard.Infrastructure.Services;
 
 public class TickerApiService : ITickerApiService
 {
-    private readonly HttpClient _http;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly string FIRST_TRANSACTION_DATE = "2024-06-06";
 
     public TickerApiService(IHttpClientFactory httpFactory)
     {
-        _http = httpFactory.CreateClient("cached-http-client");
+        _httpClientFactory = httpFactory;
     }
 
     public async Task<MarketHistoryResponse?> GetMarketHistoryResponseAsync(
@@ -26,7 +26,8 @@ public class TickerApiService : ITickerApiService
 
         var requestUrl = $"{tickerApiUrl}/get_history?code={tickerApiCode}&ticker={ticker}&period={period}&interval={interval}";
 
-        var response = await _http.GetAsync(requestUrl);
+        using var client = _httpClientFactory.CreateClient("cached-http-client");
+        var response = await client.GetAsync(requestUrl);
         response.EnsureSuccessStatusCode();
 
         var responseContent = await response.Content.ReadAsStringAsync();
