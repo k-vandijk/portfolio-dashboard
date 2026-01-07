@@ -82,19 +82,19 @@
     
     <!-- Mobile Navigation -->
     <nav id="mobile-nav">
-        <a href="/Dashboard" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
+        <a asp-controller="Dashboard" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
             <i class="fas fa-tachometer-alt"></i>
             <span>Dashboard</span>
         </a>
-        <a href="/Investment" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Investment" ? "active" : "")">
+        <a asp-controller="Investment" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Investment" ? "active" : "")">
             <i class="fas fa-chart-line"></i>
             <span>Investment</span>
         </a>
-        <a href="/MarketHistory" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MarketHistory" ? "active" : "")">
+        <a asp-controller="MarketHistory" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "MarketHistory" ? "active" : "")">
             <i class="fas fa-clock-rotate-left"></i>
             <span>History</span>
         </a>
-        <a href="/Transactions" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transactions" ? "active" : "")">
+        <a asp-controller="Transactions" asp-action="Index" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transactions" ? "active" : "")">
             <i class="fas fa-receipt"></i>
             <span>Transactions</span>
         </a>
