@@ -126,6 +126,19 @@ aside {
     --bs-table-bg: transparent !important;
 }
 
+/* Filter labels */
+.filter-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+@media (max-width: 767.98px) {
+    .filter-label {
+        font-size: 0.75rem;
+    }
+}
+
 /* Hide sidebar entirely on screens smaller than Bootstrap's md breakpoint */
 @media (max-width: 767.98px) {
     #sidebar {
@@ -139,45 +152,63 @@ aside {
     
     /* Make cards more compact on mobile */
     .card-body {
-        padding: 0.75rem !important;
+        padding: 0.5rem !important;
     }
     
     .card-header {
         padding: 0.5rem 0.75rem !important;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Spacing between filter groups */
+    .card-body > div:not(:last-child) {
+        margin-bottom: 0.75rem;
     }
 }
 
 /* Responsive button groups */
 .btn-group {
     flex-wrap: wrap;
+    gap: 0.25rem;
 }
 
 @media (max-width: 767.98px) {
+    .btn-group {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        gap: 0.25rem;
+        padding-bottom: 0.25rem;
+    }
+    
     .btn-group .btn-ticker {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.6rem !important;
+        font-size: 0.75rem;
+        padding: 0.35rem 0.5rem !important;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 }
 
 /* Responsive tables */
 @media (max-width: 767.98px) {
     .table-responsive {
-        overflow-x: auto;
+        overflow-x: auto !important;
         -webkit-overflow-scrolling: touch;
-        display: block;
+        display: block !important;
+        width: 100%;
+    }
+    
+    .table-sm {
+        width: auto !important;
+        min-width: 600px;
     }
     
     .table-sm td,
     .table-sm th {
         padding: 0.4rem 0.5rem;
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         white-space: nowrap;
-    }
-    
-    /* Allow table to be wider than viewport for scrolling */
-    .table {
-        min-width: max-content;
     }
 }
 
