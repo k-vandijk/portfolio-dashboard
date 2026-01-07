@@ -25,7 +25,7 @@ body {
     overflow: hidden;
 }
 
-/* Op mobiel maken we de body scrollbaar */
+/* Make body scrollable on mobile */
 @media (max-width: 767.98px) {
     html,
     body {
