@@ -28,9 +28,14 @@
 
     var currentTickers = currentTickersString?.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries) ?? [];
     
-    var currentYear = Context.Request.Query.TryGetValue("year", out var yearVal) && !string.IsNullOrWhiteSpace(yearVal) && int.TryParse(yearVal, out var parsedYear)
-        ? parsedYear
-        : (int?)null;
+    int? currentYear = null;
+    if (Context.Request.Query.TryGetValue("year", out var yearVal) && !string.IsNullOrWhiteSpace(yearVal))
+    {
+        if (int.TryParse(yearVal, out var parsedYear))
+        {
+            currentYear = parsedYear;
+        }
+    }
 }
 
 <div class="row" style="height: 25vh;">
@@ -64,12 +69,16 @@
                     }
                 </div>
                 <div class="btn-group w-100" role="group">
-                    <a asp-controller="Dashboard" asp-action="Index"
-                       asp-route-timerange="@currentTimerange"
-                       asp-route-tickers="@currentTickersString"
-                       asp-route-year="@null"
-                       asp-route-mode="@currentMode"
-                       class="btn btn-ticker px-3 py-2 @(currentYear == null ? "active" : "")">
+                    @{
+                        var allYearUrl = Url.Action("Index", "Dashboard", new 
+                        { 
+                            timerange = currentTimerange, 
+                            tickers = currentTickersString, 
+                            mode = currentMode 
+                            // year is intentionally omitted
+                        });
+                    }
+                    <a href="@allYearUrl" class="btn btn-ticker px-3 py-2 @(currentYear == null ? "active" : "")">
                         ALL
                     </a>
                     @foreach (var y in Model.Years)
