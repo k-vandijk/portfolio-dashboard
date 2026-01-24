@@ -27,7 +27,7 @@ public class TransactionsController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddTransaction([FromBody] Transaction transaction)
+    public async Task<IActionResult> AddTransaction([FromBody] TransactionDto transaction)
     {
         if (transaction == null)
         {

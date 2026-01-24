@@ -63,7 +63,7 @@ public class MarketHistoryController : Controller
         return PartialView("_MarketHistoryContent", viewModel);
     }
 
-    private async Task<List<Transaction>> GetTransactionsAsync()
+    private async Task<List<TransactionDto>> GetTransactionsAsync()
     {
         using var scope = _scopeFactory.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<IAzureTableService>();
@@ -71,7 +71,7 @@ public class MarketHistoryController : Controller
         return await service.GetTransactionsAsync();
     }
 
-    private async Task<MarketHistoryResponse?> GetMarketHistoryResponseAsync(string ticker)
+    private async Task<MarketHistoryResponseDto?> GetMarketHistoryResponseAsync(string ticker)
     {
         using var scope = _scopeFactory.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<ITickerApiService>();
@@ -79,7 +79,7 @@ public class MarketHistoryController : Controller
         return await service.GetMarketHistoryResponseAsync(ticker);
     }
 
-    private LineChartViewModel GetMarketHistoryViewModel(MarketHistoryResponse marketHistory)
+    private LineChartViewModel GetMarketHistoryViewModel(MarketHistoryResponseDto marketHistory)
     {
         var viewModel = new LineChartViewModel
         {
