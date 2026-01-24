@@ -2,7 +2,7 @@ name: Continuous Integration - Build & Test
 
 on:
   push:
-    branches: [main, master, dev]
+    branches: [dev]
   pull_request:
     branches: [main, master, dev]
   workflow_dispatch:
@@ -27,7 +27,6 @@ jobs:
           fetch-depth: 0
           fetch-tags: true
 
-      # Optional: Cache NuGet packages for faster builds
       - name: Cache NuGet
         uses: actions/cache@v4
         with:
