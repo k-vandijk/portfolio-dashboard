@@ -6,27 +6,30 @@ env:
   DOTNET_VERSION: '10.x'
 
 on:
-  pull_request:
-    branches: [main, master, dev]
   push:
     branches: [main]
   workflow_dispatch:
 
+# Default to least privilege; elevate per-job as needed.
 permissions:
   contents: read
 
 concurrency:
+  # Prevent overlapping runs on the same ref (e.g., multiple pushes in quick succession).
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   cd-build:
+    name: Build and package
     runs-on: ubuntu-latest
     steps:
+      # Fetch repository source for build.
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Cache NuGet
+      # Speed up restores by caching the global NuGet package folder.
+      - name: Cache NuGet packages
         uses: actions/cache@v4
         with:
           path: ~/.nuget/packages
@@ -34,60 +37,68 @@ jobs:
           restore-keys: |
             nuget-${{ runner.os }}-
 
-      - name: Setup .NET
+      # Install the targeted .NET SDK (can be preview if you set 10.x).
+      - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Restore
+      # Restore dependencies.
+      - name: Restore dependencies
         run: dotnet restore
 
+      # Compile in Release configuration.
       - name: Build
         run: dotnet build --configuration Release --no-restore
 
+      # Produce deployable output to a deterministic folder.
+      - name: Publish
+        run: dotnet publish -c Release -o ${{ env.DOTNET_ROOT }}/myapp --no-build
+
+      # Make the published output available to downstream jobs (release/deploy).
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: .net-app
+          path: ${{ env.DOTNET_ROOT }}/myapp
+
   cd-release:
+    name: Versioning and release
     runs-on: ubuntu-latest
     needs: cd-build
-    # if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    # Only this job needs elevated permissions.
     permissions:
       contents: write
+      pull-requests: read
 
     steps:
-      - name: Checkout
+      # Full history + tags are required for GitVersion accuracy.
+      - name: Checkout (full history + tags)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
 
-      - name: Install GitVersion
+      # Install GitVersion tool (SemVer calculation based on Git history and config).
+      - name: Setup GitVersion
         uses: gittools/actions/gitversion/setup@v3
         with:
           versionSpec: '6.x'
 
-      - name: Calculate Version
+      # Compute version variables (requires GitVersion.yml if useConfigFile=true).
+      - name: Calculate version
         id: gitversion
         uses: gittools/actions/gitversion/execute@v3
         with:
           useConfigFile: true
 
-      - name: Display Version
+      # Show the computed version in logs for traceability.
+      - name: Display computed version
         run: echo "Version ${{ steps.gitversion.outputs.semVer }}"
 
-      - name: Generate release notes (PR preview, no GitHub API)
-        if: github.event_name == 'pull_request'
-        uses: orhun/git-cliff-action@v4
-        with:
-          args: -o RELEASE_NOTES.md --strip all
-          github_token: ""
-
-      - name: Upload preview release notes
-        if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v4
-        with:
-          name: release-notes-preview
-          path: RELEASE_NOTES.md
-
-      - name: Generate release notes (real release, with GitHub API)
+      # Generate release notes with GitHub metadata enabled.
+      - name: Generate release notes (push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: orhun/git-cliff-action@v4
         with:
@@ -96,20 +107,41 @@ jobs:
           GITHUB_REPO: ${{ github.repository }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configure git identity
+      # Ensure release notes file exists before creating a release.
+      - name: Validate release notes file
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: test -s RELEASE_NOTES.md
+
+      # Configure committer identity for annotated tags.
+      - name: Configure git identity (for tagging)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Tag
+      # Skip tag creation if it already exists (rerun safety).
+      - name: Check if tag already exists
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        id: tagcheck
         run: |
-          git tag -a "v${{ steps.gitversion.outputs.semVer }}" -m "v${{ steps.gitversion.outputs.semVer }}"
-          git push origin "v${{ steps.gitversion.outputs.semVer }}"
+          TAG="v${{ steps.gitversion.outputs.semVer }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
 
+      # Create and push an annotated tag for the computed version.
+      - name: Create and push tag
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.tagcheck.outputs.exists != 'true'
+        run: |
+          TAG="v${{ steps.gitversion.outputs.semVer }}"
+          git tag -a "$TAG" -m "$TAG"
+          git push origin "$TAG"
+
+      # Create a GitHub Release using the generated release notes.
       - name: Create GitHub Release
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main' && steps.tagcheck.outputs.exists != 'true'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ steps.gitversion.outputs.semVer }}"
@@ -119,20 +151,25 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   cd-deploy:
-    permissions:
-      contents: none
+    name: Deploy to Azure Web App (Production)
     runs-on: ubuntu-latest
     needs: cd-release
+
+    permissions:
+      contents: none
+
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      # Retrieve the published build output from the build job.
+      - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
           name: .net-app
 
+      # Deploy the artifact to Azure App Service.
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
