@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-test:
+  ci-build-test:
     runs-on: ubuntu-latest
 
     steps:
