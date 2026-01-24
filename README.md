@@ -218,6 +218,27 @@ Dashboard.Infrastructure/
 - Warnings are treated as errors
 - Use dependency injection for service management
 
+### Branching Strategy & Workflow
+
+The project follows a structured Git workflow with three main branch types:
+
+**Branch Structure:**
+- **`main`**: Production-ready code, always stable and deployed to Azure
+- **`dev`**: Default development branch for integration testing
+- **`feat-*` / `fix-*`**: Feature and bugfix branches for active development
+
+**Development Workflow:**
+1. Create a feature or fix branch from `dev` (e.g., `feat-portfolio-analytics` or `fix-chart-rendering`)
+2. Develop and commit changes in the feature/fix branch
+3. Create a Pull Request (PR) to merge into `dev`
+4. After merge to `dev`, test changes in the development environment
+5. When ready for production, create a rebase PR from `dev` to `main` (keeps history linear)
+
+**CI/CD Pipeline:**
+- **Build Validation**: Automated on all PRs to `main` and `dev` (must pass to merge)
+- **Testing**: Unit and integration tests run on all PRs (required for merge)
+- **Deployment**: Push to `main` automatically triggers CD pipeline deploying to Azure production environment
+
 ### Logging
 The application uses Serilog for structured logging:
 - Console logging enabled
