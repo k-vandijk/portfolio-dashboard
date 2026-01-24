@@ -73,12 +73,28 @@ jobs:
       - name: Display Version
         run: echo "Version ${{ steps.gitversion.outputs.semVer }}"
 
-      - name: Generate release notes (git-cliff)
+      - name: Generate release notes (PR preview, no GitHub API)
+        if: github.event_name == 'pull_request'
+        uses: orhun/git-cliff-action@v4
+        with:
+          args: -o RELEASE_NOTES.md --strip all
+          github_token: ""
+
+      - name: Upload preview release notes
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes-preview
+          path: RELEASE_NOTES.md
+
+      - name: Generate release notes (real release, with GitHub API)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: orhun/git-cliff-action@v4
         with:
           args: -o RELEASE_NOTES.md
         env:
           GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag
         run: |
