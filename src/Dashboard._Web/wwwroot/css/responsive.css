@@ -81,7 +81,14 @@
     }
     
     /* Fix for rows with fixed vh heights - make them auto on mobile */
-    .row[style*="height"] {
+    .row[style*="height"],
+    .row.h-15vh,
+    .row.h-25vh,
+    .row.h-47vh,
+    .row.h-48vh,
+    .row.h-70vh,
+    .row.h-80vh,
+    .row.h-95vh {
         height: auto !important;
         min-height: auto !important;
     }
@@ -111,5 +118,10 @@
     /* Reduce card body padding for metric cards */
     .card.text-center .card-body {
         padding: 0.75rem !important;
+    }
+    
+    /* Add extra margin to DataTables pagination on mobile to prevent overlap with bottom nav */
+    .dataTables_wrapper .dataTables_paginate {
+        margin-bottom: 1rem !important;
     }
 }
