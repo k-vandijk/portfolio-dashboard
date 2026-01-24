@@ -22,7 +22,21 @@ html,
 body {
     font-family: 'Roboto', sans-serif;
     height: 100%;
-    overflow: hidden;
+}
+
+/* Allow scrolling on mobile devices */
+@media (max-width: 767.98px) {
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
+/* Prevent scrolling on desktop */
+@media (min-width: 768px) {
+    body {
+        overflow: hidden;
+    }
 }
 
 /* Verzorgt de background gradient */
@@ -115,6 +129,28 @@ aside {
 /* Table styling */
 .table-transparent {
     --bs-table-bg: transparent !important;
+}
+
+/* Main content area styling */
+#main-content {
+    width: 100%;
+}
+
+/* Desktop: fixed height with scroll */
+@media (min-width: 768px) {
+    #main-content {
+        max-height: 100vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+}
+
+/* Mobile: natural scrolling */
+@media (max-width: 767.98px) {
+    #main-content {
+        width: 100%;
+        padding-bottom: 80px !important; /* Space for bottom nav - will add later */
+    }
 }
 
 /* Hide sidebar entirely on screens smaller than Bootstrap's md breakpoint */
