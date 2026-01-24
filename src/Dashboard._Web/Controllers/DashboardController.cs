@@ -4,6 +4,7 @@ using Dashboard.Application.Helpers;
 using Dashboard.Application.Interfaces;
 using Dashboard._Web.ViewModels;
 using kvandijk.Common.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -102,6 +103,68 @@ public class DashboardController : Controller
             sw.ElapsedMilliseconds);
 
         return PartialView("_DashboardContent", viewModel);
+    }
+
+    [AllowAnonymous]
+    [SkipRequestTiming]
+    [HttpGet("/dashboard/lineonly.png")]
+    public async Task<IActionResult> LineOnlyImage(
+        [FromQuery] string? mode = "profit",
+        [FromQuery] string? tickers = null,
+        [FromQuery] string? timerange = null,
+        [FromQuery] int? year = null,
+        [FromQuery] int width = 1200,
+        [FromQuery] int height = 400,
+        [FromQuery] int padding = 16,
+        [FromQuery] bool transparent = true)
+    {
+        width = Math.Clamp(width, 150, 4000);
+        height = Math.Clamp(height, 60, 2000);
+        padding = Math.Clamp(padding, 0, 200);
+
+        var transactions = await _azureTableService.GetTransactionsAsync();
+
+        var allTickers = transactions
+            .Select(t => t.Ticker.ToUpperInvariant())
+            .Distinct()
+            .ToList();
+
+        var marketHistoryDataPoints = await GetMarketHistoryDataPoints(allTickers);
+
+        var filteredTransactions = FilterHelper.FilterTransactions(transactions, tickers);
+
+        LineChartViewModel chart = mode switch
+        {
+            "value" => GetPortfolioWorthLineChart(filteredTransactions, marketHistoryDataPoints),
+            "profit" => GetPortfolioProfitLineChart(filteredTransactions, marketHistoryDataPoints),
+            "profit-percentage" => GetPortfolioProfitPercentageLineChart(filteredTransactions, marketHistoryDataPoints),
+            _ => throw new InvalidOperationException("Invalid mode")
+        };
+
+        DateOnly startDate, endDate;
+        if (year.HasValue)
+            (startDate, endDate) = FilterHelper.GetMinMaxDatesFromYear(year.Value);
+        else
+            (startDate, endDate) = FilterHelper.GetMinMaxDatesFromTimeRange(timerange ?? "ALL");
+
+        var firstTransactionDate = filteredTransactions.Any()
+            ? filteredTransactions.Min(t => t.Date)
+            : DateOnly.MinValue;
+
+        if (startDate < firstTransactionDate) startDate = firstTransactionDate;
+
+        chart.DataPoints = FilterHelper.FilterLineChartDataPoints(chart.DataPoints, startDate, endDate);
+        chart.DataPoints = NormalizeSeries(chart.DataPoints, mode);
+
+        var png = LineOnlyRenderer.RenderPng(
+            chart.DataPoints,
+            width,
+            height,
+            padding,
+            transparentBackground: transparent);
+
+        Response.Headers.CacheControl = "private, max-age=60";
+        return File(png, "image/png");
     }
 
     private async Task<List<MarketHistoryDataPoint>> GetMarketHistoryDataPoints(List<string> tickers)
