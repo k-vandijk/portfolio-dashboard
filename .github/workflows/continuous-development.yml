@@ -1,9 +1,9 @@
-name: Continuous Development - Publish to Azure Web App
+name: Continuous Development - Build & Deploy
 
 env:
   AZURE_WEBAPP_NAME: as-kvandijk-ticker-api-dashboard
   AZURE_WEBAPP_PACKAGE_PATH: '.'
-  DOTNET_VERSION: '10'
+  DOTNET_VERSION: '10.x'
 
 on:
   push:
@@ -13,28 +13,39 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
-      - name: Set up .NET Core
+      - name: Cache NuGet
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/*.fsproj', '**/*.vbproj', '**/packages.lock.json', '**/Directory.Packages.props', '**/global.json') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
-      - name: Set up dependency caching for faster builds
-        uses: actions/cache@v3
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
+      - name: Restore
+        run: dotnet restore
 
-      - name: Build with dotnet
-        run: dotnet build --configuration Release
+      - name: Build (Release)
+        run: dotnet build --configuration Release --no-restore
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
