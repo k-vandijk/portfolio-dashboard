@@ -1,11 +1,11 @@
 using Dashboard.Application.Dtos;
 using Dashboard.Application.Helpers;
 using Dashboard.Application.Interfaces;
-using Dashboard.Web.ViewModels;
+using Dashboard._Web.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
-namespace Dashboard.Web.Controllers;
+namespace Dashboard._Web.Controllers;
 
 public class InvestmentController : Controller
 {

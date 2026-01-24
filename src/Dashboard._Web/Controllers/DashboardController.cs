@@ -2,7 +2,7 @@
 using Dashboard.Application.Dtos;
 using Dashboard.Application.Helpers;
 using Dashboard.Application.Interfaces;
-using Dashboard.Web.ViewModels;
+using Dashboard._Web.ViewModels;
 using kvandijk.Common.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;

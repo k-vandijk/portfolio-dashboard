@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Dashboard.Application.Dtos;
 
-namespace Dashboard.Web.Controllers;
+namespace Dashboard._Web.Controllers;
 
 public class TransactionsController : Controller
 {
