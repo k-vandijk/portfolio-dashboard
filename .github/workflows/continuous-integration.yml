@@ -1,4 +1,4 @@
-name: Continuous Integration - Build & Test
+name: Continuous Integration
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-test:
+  ci-build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -58,7 +58,6 @@ jobs:
           path: ./TestResults/*.trx
           if-no-files-found: warn
 
-      # Publish test results to the Checks tab (nice UX for PRs)
       - name: Publish test report
         if: always()
         uses: dorny/test-reporter@v1

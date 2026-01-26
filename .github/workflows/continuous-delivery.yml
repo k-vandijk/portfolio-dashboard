@@ -1,4 +1,4 @@
-name: Continuous Development - Build & Deploy
+name: Continuous Delivery
 
 env:
   AZURE_WEBAPP_NAME: as-kvandijk-ticker-api-dashboard
@@ -18,7 +18,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  cd-build:
     runs-on: ubuntu-latest
 
     steps:
@@ -56,7 +56,7 @@ jobs:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
 
-  deploy:
+  cd-deploy:
     permissions:
       contents: none
     runs-on: ubuntu-latest
