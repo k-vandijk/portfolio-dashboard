@@ -1,8 +1,11 @@
-name: Continuous Integration
+name: Continuous integration
+
+env:
+  DOTNET_VERSION: '10.x'
 
 on:
   pull_request:
-    branches: [main, master, dev]
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:
@@ -40,14 +43,14 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: "10.x"
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       # Restores all NuGet dependencies for the solution
-      - name: Restore
+      - name: Restore dependencies
         run: dotnet restore
 
       # Builds the solution in Release configuration without restoring again
-      - name: Build
+      - name: Build solution
         run: dotnet build --configuration Release --no-restore
 
       # Runs automated tests and outputs results in TRX format
