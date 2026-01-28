@@ -1,4 +1,3 @@
-/* CSS Custom Properties - Color scheme and design tokens */
 :root {
     --accent-1: #1560BD; /* Denim Blue */
     --accent-1-hover: #104E8B; /* Darker shade for hover effect */
@@ -16,7 +15,7 @@
     --border-radius: 12px;
     --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.06);
     --shadow-hover: 0 6px 18px rgba(0, 0, 0, 0.08);
-    
+
     /* Loading bar color for top progress indicator */
     --kvandijk-loading-bar-color: var(--accent-1);
 }
