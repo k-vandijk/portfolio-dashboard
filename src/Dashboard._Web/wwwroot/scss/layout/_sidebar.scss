@@ -111,7 +111,7 @@
     margin-top: auto;
 }
 
-// Verberg de language selector als de sidebar collapsed is
+// Hide the language selector when the sidebar is collapsed
 #sidebar.collapsed .language-selector {
     display: none !important;
 }
