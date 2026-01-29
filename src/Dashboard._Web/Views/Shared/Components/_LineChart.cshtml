@@ -53,6 +53,20 @@
         const mode = @Html.Raw(JsonSerializer.Serialize(Model.Mode));
         const isProfitMode = mode === 'profit' || mode === 'profit-percentage';
 
+        // Build y-axis configuration
+        const yAxisConfig = {
+            grid: { display: false },
+            ticks: {
+                maxTicksLimit: 6,
+                callback: (value) => formatY(value)
+            }
+        };
+
+        // For profit modes, ensure 0 is always visible on the y-axis
+        if (isProfitMode) {
+            yAxisConfig.beginAtZero = true;
+        }
+
         new Chart(element, {
             type: 'line',
             data: chartData,
@@ -67,17 +81,7 @@
                 },
                 scales: {
                     x: { grid: { display: false }, ticks: { maxTicksLimit: 12 } },
-                    y: {
-                        grid: { display: false },
-                        ticks: {
-                            maxTicksLimit: 6,
-                            callback: (value) => formatY(value)
-                        },
-                        // For profit modes, ensure 0 is always visible on the y-axis
-                        ...(isProfitMode && {
-                            beginAtZero: true
-                        })
-                    }
+                    y: yAxisConfig
                 }
             }
         });
