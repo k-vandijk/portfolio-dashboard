@@ -93,8 +93,17 @@
         min-height: auto !important;
     }
     
-    // Ensure cards in rows stack properly
+    // Ensure cards in rows stack properly with consistent spacing
     .row > [class*="col-"] {
+        margin-bottom: 1rem;
+    }
+    
+    // Ensure collapsed filter cards have consistent spacing
+    .collapse:not(.show) {
+        margin-bottom: 0 !important;
+    }
+    
+    .collapse.show .card {
         margin-bottom: 1rem;
     }
     
