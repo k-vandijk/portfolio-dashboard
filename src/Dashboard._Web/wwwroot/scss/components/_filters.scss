@@ -36,10 +36,3 @@
         font-size: 1rem;
     }
 }
-
-// On mobile, add margin to expanded filter content
-@media (max-width: 767.98px) {
-    .collapse.show {
-        margin-bottom: 1rem;
-    }
-}
