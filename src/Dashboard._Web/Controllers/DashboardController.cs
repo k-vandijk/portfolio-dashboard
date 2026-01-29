@@ -87,6 +87,10 @@ public class DashboardController : Controller
         if (startDate < firstTransactionDate) startDate = firstTransactionDate;
 
         lineChartViewModel.DataPoints = FilterHelper.FilterLineChartDataPoints(lineChartViewModel.DataPoints, startDate, endDate);
+        
+        // Normalize profit modes to start at zero (shows growth relative to filtered period start)
+        lineChartViewModel.DataPoints = LineChartHelper.NormalizeSeries(lineChartViewModel.DataPoints, mode);
+        
         lineChartViewModel.Profit = LineChartHelper.CalculatePeriodDelta(lineChartViewModel.DataPoints);
 
         var viewModel = new DashboardViewModel
