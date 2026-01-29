@@ -170,7 +170,7 @@
                         <label class="filter-label mb-1">Jaar</label>
                         <div class="btn-group w-100" role="group">
                             @{
-                                var allYearUrl2 = Url.Action("Index", "Dashboard", new 
+                                var allYearUrlMobile = Url.Action("Index", "Dashboard", new 
                                 { 
                                     timerange = "ALL", 
                                     tickers = currentTickersString, 
@@ -178,19 +178,19 @@
                                     // year is intentionally omitted
                                 });
                             }
-                            <a href="@allYearUrl2" class="btn btn-ticker btn-sm px-2 py-1 @(currentYear == null ? "active" : "")">
+                            <a href="@allYearUrlMobile" class="btn btn-ticker btn-sm px-2 py-1 @(currentYear == null ? "active" : "")">
                                 ALL
                             </a>
                             @foreach (var y in Model.Years)
                             {
-                                var yearUrl2 = Url.Action("Index", "Dashboard", new 
+                                var yearUrlMobile = Url.Action("Index", "Dashboard", new 
                                 { 
                                     tickers = currentTickersString, 
                                     year = y, 
                                     mode = currentMode 
                                     // timerange is intentionally omitted when year is selected
                                 });
-                                <a href="@yearUrl2" class="btn btn-ticker btn-sm px-2 py-1 @(y == currentYear ? "active" : "")">
+                                <a href="@yearUrlMobile" class="btn btn-ticker btn-sm px-2 py-1 @(y == currentYear ? "active" : "")">
                                     @y
                                 </a>
                             }
