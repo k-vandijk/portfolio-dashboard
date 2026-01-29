@@ -66,6 +66,9 @@ public class DashboardController : Controller
             _ => throw new InvalidOperationException("mode cannot be null")
         };
 
+        // Set the mode on the view model for chart configuration
+        lineChartViewModel.Mode = mode;
+
         // Apply time range or year filter to line chart
         DateOnly startDate, endDate;
         if (year.HasValue)
@@ -84,8 +87,7 @@ public class DashboardController : Controller
         if (startDate < firstTransactionDate) startDate = firstTransactionDate;
 
         lineChartViewModel.DataPoints = FilterHelper.FilterLineChartDataPoints(lineChartViewModel.DataPoints, startDate, endDate);
-        lineChartViewModel.DataPoints = NormalizeSeries(lineChartViewModel.DataPoints, mode);
-        lineChartViewModel.Profit = GetPeriodDelta(lineChartViewModel.DataPoints, mode);
+        lineChartViewModel.Profit = LineChartHelper.CalculatePeriodDelta(lineChartViewModel.DataPoints);
 
         var viewModel = new DashboardViewModel
         {
@@ -241,8 +243,16 @@ public class DashboardController : Controller
             .GroupBy(h => h.Ticker!.ToUpperInvariant())
             .ToDictionary(g => g.Key, g => g.OrderBy(h => h.Date).ToList());
 
+        // Get first transaction date to skip earlier data points
+        var firstTransactionDate = transactionsByTicker.Values
+            .SelectMany(txs => txs)
+            .Select(tx => tx.Date)
+            .DefaultIfEmpty(DateOnly.MaxValue)
+            .Min();
+
         var allDates = historyByTicker.Values
             .SelectMany(g => g.Select(x => x.Date))
+            .Where(d => d >= firstTransactionDate) // Only include dates from first transaction onwards
             .Distinct()
             .OrderBy(d => d)
             .ToList();
@@ -305,32 +315,5 @@ public class DashboardController : Controller
             DataPoints = points,
             Format = format,
         };
-    }
-
-    private static List<DataPointDto> NormalizeSeries(IReadOnlyList<DataPointDto> points, string? mode)
-    {
-        // If 'profit' or 'profit-percentage', normalize to start at zero
-
-        if (mode == "profit" || mode == "profit-percentage")
-        {
-            var first = points.FirstOrDefault()?.Value ?? 0m;
-
-            return points.Select(p => new DataPointDto
-            {
-                Label = p.Label,
-                Value = p.Value - first
-            }).ToList();
-        }
-
-        return points.ToList();
-    }
-
-    private static decimal? GetPeriodDelta(List<DataPointDto> points, string mode)
-    {
-        return points.Count > 0
-            ? mode == "value"
-                ? points[^1].Value - points[0].Value
-                : points[^1].Value
-            : null;
     }
 }

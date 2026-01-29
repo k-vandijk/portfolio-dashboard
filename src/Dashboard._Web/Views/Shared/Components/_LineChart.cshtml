@@ -50,6 +50,9 @@
         chartData.datasets[0].borderColor = accentColors[0];
         chartData.datasets[0].backgroundColor = accentColors[0] + "33";
 
+        const mode = @Html.Raw(JsonSerializer.Serialize(Model.Mode));
+        const isProfitMode = mode === 'profit' || mode === 'profit-percentage';
+
         new Chart(element, {
             type: 'line',
             data: chartData,
@@ -69,7 +72,12 @@
                         ticks: {
                             maxTicksLimit: 6,
                             callback: (value) => formatY(value)
-                        }
+                        },
+                        // For profit modes, ensure 0 is visible on the y-axis
+                        ...(isProfitMode && {
+                            beginAtZero: false,
+                            grace: '5%' // Add 5% padding above/below to ensure 0 is visible
+                        })
                     }
                 }
             }
