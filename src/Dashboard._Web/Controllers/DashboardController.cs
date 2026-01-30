@@ -24,8 +24,6 @@ public class DashboardController : Controller
         _localizer = localizer;
     }
 
-    // TODO optimaliseren
-
     [HttpGet("/")]
     public IActionResult Index() => View();
 
@@ -49,7 +47,6 @@ public class DashboardController : Controller
             .Distinct()
             .ToList();
 
-        // TODO minder markthistorie ophalen voor performance
         var msBeforeMarketHistory = sw.ElapsedMilliseconds;
         var marketHistoryDataPoints = await GetMarketHistoryDataPoints(tx);
         var msAfterMarketHistory = sw.ElapsedMilliseconds;
@@ -104,7 +101,7 @@ public class DashboardController : Controller
         return PartialView("_DashboardContent", viewModel);
     }
 
-    private async Task<List<MarketHistoryDataPoint>> GetMarketHistoryDataPoints(List<string> tickers)
+    private async Task<List<MarketHistoryDataPointDto>> GetMarketHistoryDataPoints(List<string> tickers)
     {
         // Kick off all requests concurrently
         var fetchTasks = tickers.Select(GetMarketHistoryForTickerAsync).ToArray();
@@ -157,7 +154,7 @@ public class DashboardController : Controller
         }
     }
 
-    private List<DashboardTableRowViewModel> GetDashboardTableRows(List<string> tickers, List<TransactionDto> transactions, List<MarketHistoryDataPoint> marketHistoryDataPoints)
+    private List<DashboardTableRowViewModel> GetDashboardTableRows(List<string> tickers, List<TransactionDto> transactions, List<MarketHistoryDataPointDto> marketHistoryDataPoints)
     {
         var latestClose = marketHistoryDataPoints
             .GroupBy(p => p.Ticker!.ToUpperInvariant())
@@ -211,25 +208,25 @@ public class DashboardController : Controller
         return rows;
     }
 
-    private LineChartViewModel GetPortfolioWorthLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPoint> history, string? title = null)
+    private LineChartViewModel GetPortfolioWorthLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPointDto> history, string? title = null)
     {
         title ??= _localizer["PortfolioWorth"];
         return GetPortfolioLineChart(transactions, history, title, "currency", (worth, invested) => worth);
     }
 
-    private LineChartViewModel GetPortfolioProfitLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPoint> history, string? title = null)
+    private LineChartViewModel GetPortfolioProfitLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPointDto> history, string? title = null)
     {
         title ??= _localizer["PortfolioProfitEur"];
         return GetPortfolioLineChart(transactions, history, title, "currency", (worth, invested) => worth - invested);
     }
 
-    private LineChartViewModel GetPortfolioProfitPercentageLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPoint> history, string? title = null)
+    private LineChartViewModel GetPortfolioProfitPercentageLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPointDto> history, string? title = null)
     {
         title ??= _localizer["PortfolioProfitPct"];
         return GetPortfolioLineChart(transactions, history, title, "percentage", (worth, invested) => invested != 0m ? (worth - invested) / invested * 100m : 0m);
     }
 
-    private LineChartViewModel GetPortfolioLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPoint> history, string title, string format, Func<decimal, decimal, decimal> selector)
+    private LineChartViewModel GetPortfolioLineChart(List<TransactionDto> transactions, List<MarketHistoryDataPointDto> history, string title, string format, Func<decimal, decimal, decimal> selector)
     {
         var transactionsByTicker = transactions
             .Where(t => !string.IsNullOrWhiteSpace(t.Ticker))

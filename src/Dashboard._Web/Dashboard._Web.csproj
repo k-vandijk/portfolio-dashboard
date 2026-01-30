@@ -9,7 +9,6 @@
     <PackageReference Include="kvandijk.Common" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.Identity.Web.UI" />
-    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
 
   <ItemGroup>
