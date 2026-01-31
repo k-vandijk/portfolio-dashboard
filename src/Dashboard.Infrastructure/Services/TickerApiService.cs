@@ -43,7 +43,6 @@ public class TickerApiService : ITickerApiService
             PropertyNameCaseInsensitive = true
         });
 
-        // 10 minuten sliding + 60 minuten absolute (voorbeeld)
         _cache.Set(cacheKey, marketHistory, new MemoryCacheEntryOptions
         {
             SlidingExpiration = TimeSpan.FromMinutes(StaticDetails.SlidingExpirationMinutes),

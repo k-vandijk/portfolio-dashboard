@@ -1,16 +1,12 @@
 ﻿using Dashboard.Infrastructure;
 using kvandijk.Common.Diagnostics;
-using kvandijk.Common.Extensions;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Serilog;
 using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.ConfigureSerilog();
 
 // Add services to the container.
 // Add Azure AD authentication
@@ -77,7 +73,7 @@ app.UseMiddleware<RequestTimingMiddleware>();
 
 await app.StartAsync();
 
-foreach (var a in app.Urls) Log.Information("Now listening on: {BaseUrl}", a);
+foreach (var url in app.Urls) Console.WriteLine($"Now listening on: {url}");
 
 // keep the app running
 await app.WaitForShutdownAsync();

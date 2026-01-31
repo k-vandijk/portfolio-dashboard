@@ -192,4 +192,22 @@
   <data name="Language" xml:space="preserve">
     <value>Language</value>
   </data>
+  <data name="SystemUrl_Transactions" xml:space="preserve">
+    <value>transactions</value>
+  </data>
+  <data name="SystemUrl_MarketHistory" xml:space="preserve">
+    <value>market-history</value>
+  </data>
+  <data name="SystemUrl_Investment" xml:space="preserve">
+    <value>investment</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Year</value>
+  </data>
 </root>
