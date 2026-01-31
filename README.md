@@ -388,7 +388,7 @@ tests/
 
 ### Continuous Integration
 
-**Workflow**: `.github/workflows/ci.yml`
+**Workflow**: `.github/workflows/continuous-integration.yml`
 
 - Triggers on Pull Requests to `main` branch
 - Builds the solution
@@ -398,7 +398,7 @@ tests/
 
 ### Continuous Deployment
 
-**Workflow**: `.github/workflows/cd.yml`
+**Workflow**: `.github/workflows/continuous-deployment.yml`
 
 - Triggers on push to `main` branch
 - Builds frontend assets (SCSS → CSS)
