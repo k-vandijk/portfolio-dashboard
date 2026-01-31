@@ -82,7 +82,7 @@ Portfolio Insight Dashboard is an ASP.NET Core MVC application that enables inve
 - [Node.js 20.x](https://nodejs.org/) (for SCSS compilation)
 - Azure Active Directory tenant
 - Azure Table Storage account
-- Ticker API access credentials
+- Ticker API or a similar market data provider
 
 ### Setup Steps
 
