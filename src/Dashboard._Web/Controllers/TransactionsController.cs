@@ -16,6 +16,7 @@ public class TransactionsController : Controller
     }
 
     [HttpGet("/transactions")]
+    [HttpGet("/transacties")]
     public IActionResult Index() => View();
 
     [HttpGet("/transactions/content")]

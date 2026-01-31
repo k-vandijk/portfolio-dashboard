@@ -192,4 +192,22 @@
   <data name="Language" xml:space="preserve">
     <value>Taal</value>
   </data>
+  <data name="SystemUrl_Transactions" xml:space="preserve">
+    <value>transacties</value>
+  </data>
+  <data name="SystemUrl_MarketHistory" xml:space="preserve">
+    <value>markthistorie</value>
+  </data>
+  <data name="SystemUrl_Investment" xml:space="preserve">
+    <value>investering</value>
+  </data>
+  <data name="Mode" xml:space="preserve">
+    <value>Modus</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Periode</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>Jaar</value>
+  </data>
 </root>

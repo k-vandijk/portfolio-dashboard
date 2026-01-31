@@ -21,6 +21,7 @@ public class InvestmentController : Controller
     }
 
     [HttpGet("/investment")]
+    [HttpGet("/investering")]
     public IActionResult Index() => View();
 
     [HttpGet("/investment/content")]

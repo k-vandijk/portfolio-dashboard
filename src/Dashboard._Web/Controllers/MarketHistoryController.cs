@@ -20,6 +20,7 @@ public class MarketHistoryController : Controller
     }
 
     [HttpGet("/market-history")]
+    [HttpGet("/markthistorie")]
     public IActionResult Index() => View();
 
     [HttpGet("/market-history/content")]
