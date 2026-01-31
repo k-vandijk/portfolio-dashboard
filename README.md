@@ -21,14 +21,6 @@ A .NET 10 Progressive Web App for tracking and visualizing investment portfolio 
 
 Portfolio Insight Dashboard is an ASP.NET Core MVC application that enables investors to track stock portfolio performance through interactive visualizations and real-time market data. Built with Clean Architecture principles, the application integrates with a custom Ticker API for market data via Yahoo Finance and uses Azure Table Storage for transaction persistence.
 
-**Core Capabilities:**
-- Real-time portfolio valuation with multiple display modes (value, profit, profit percentage)
-- Historical performance analytics with customizable time ranges
-- Transaction management for buy/sell history tracking
-- Concurrent market data fetching for optimal performance
-- Multi-language support (Dutch/English) with locale-specific formatting
-- Azure AD authentication for enterprise security
-
 ## Key Features
 
 ### 📊 Portfolio Analytics
@@ -68,7 +60,6 @@ Portfolio Insight Dashboard is an ASP.NET Core MVC application that enables inve
 - .NET 10 (C# 12) with ASP.NET Core MVC
 - Azure.Data.Tables for Table Storage
 - Microsoft.Identity.Web for Azure AD
-- Serilog for structured logging
 
 **Frontend:**
 - Bootstrap 5.3.3 (primary UI framework)
