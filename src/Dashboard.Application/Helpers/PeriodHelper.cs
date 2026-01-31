@@ -19,12 +19,13 @@ public static class PeriodHelper
     /// </summary>
     /// <param name="timerange">Timerange value (1W, 1M, 3M, YTD, ALL)</param>
     /// <param name="firstTransactionDate">Optional first transaction date for ALL period</param>
-    /// <returns>API period parameter (7d, 1mo, 3mo, 2mo for YTD to include previous year data, or calculated years in 'ny' format)</returns>
+    /// <returns>API period parameter (14d for 1W, 1mo, 3mo, 2mo for YTD to include previous year data, or calculated years in 'ny' format)</returns>
     public static string GetPeriodFromTimeRange(string? timerange, DateOnly? firstTransactionDate = null)
     {
         return timerange?.ToUpperInvariant() switch
         {
-            "1W" => "7d",
+            // 1W: fetch 14 days (2 weeks) to ensure we have enough data coverage
+            "1W" => "14d",
             "1M" => "1mo",
             "3M" => "3mo",
             // YTD: fetch 2 months to ensure we have data from end of previous year
@@ -46,7 +47,7 @@ public static class PeriodHelper
         var today = DateOnly.FromDateTime(DateTime.UtcNow);
         var yearsDifference = today.Year - year;
         
-        // Add 1 to ensure we have enough data coverage
+        // Add 2 to ensure we have enough data coverage (yearsDifference + 2)
         return $"{yearsDifference + 2}y";
     }
 }

@@ -53,8 +53,8 @@ public class PeriodHelperTests
     }
 
     [Theory]
-    [InlineData("1W", "7d")]
-    [InlineData("1w", "7d")]
+    [InlineData("1W", "14d")] // 1W fetches 14d (2 weeks) to ensure data coverage
+    [InlineData("1w", "14d")]
     [InlineData("1M", "1mo")]
     [InlineData("1m", "1mo")]
     [InlineData("3M", "3mo")]
