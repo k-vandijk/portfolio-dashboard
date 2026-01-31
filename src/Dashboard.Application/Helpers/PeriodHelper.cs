@@ -19,7 +19,7 @@ public static class PeriodHelper
     /// </summary>
     /// <param name="timerange">Timerange value (1W, 1M, 3M, YTD, ALL)</param>
     /// <param name="firstTransactionDate">Optional first transaction date for ALL period</param>
-    /// <returns>API period parameter (7d, 1mo, 3mo, ytd, or calculated years in 'ny' format)</returns>
+    /// <returns>API period parameter (7d, 1mo, 3mo, 2mo for YTD to include previous year data, or calculated years in 'ny' format)</returns>
     public static string GetPeriodFromTimeRange(string? timerange, DateOnly? firstTransactionDate = null)
     {
         return timerange?.ToUpperInvariant() switch
@@ -27,7 +27,9 @@ public static class PeriodHelper
             "1W" => "7d",
             "1M" => "1mo",
             "3M" => "3mo",
-            "YTD" => "ytd",
+            // YTD: fetch 2 months to ensure we have data from end of previous year
+            // This prevents gaps in early January when market data isn't available yet
+            "YTD" => "2mo",
             "ALL" or _ => GetDefaultPeriod(firstTransactionDate)
         };
     }

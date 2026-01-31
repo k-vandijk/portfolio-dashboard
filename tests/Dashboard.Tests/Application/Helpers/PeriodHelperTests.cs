@@ -59,8 +59,8 @@ public class PeriodHelperTests
     [InlineData("1m", "1mo")]
     [InlineData("3M", "3mo")]
     [InlineData("3m", "3mo")]
-    [InlineData("YTD", "ytd")]
-    [InlineData("ytd", "ytd")]
+    [InlineData("YTD", "2mo")] // YTD fetches 2mo to include previous year data
+    [InlineData("ytd", "2mo")]
     [InlineData("ALL", null)] // Will use default period calculation (ny format)
     [InlineData("all", null)]
     [InlineData(null, null)]
