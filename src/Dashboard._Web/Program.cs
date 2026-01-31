@@ -1,5 +1,4 @@
 ﻿using Dashboard.Infrastructure;
-using kvandijk.Common.Diagnostics;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Identity.Web;
@@ -68,8 +67,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute("default", "{controller=Dashboard}/{action=Index}/{id?}");
-
-app.UseMiddleware<RequestTimingMiddleware>();
 
 await app.StartAsync();
 
