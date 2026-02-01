@@ -1,0 +1,19 @@
+﻿@model MobileFilterFabDropdownViewModel
+
+<div class="dropdown d-md-none position-fixed top-0 end-0 m-3" style="z-index: 1050;">
+    <button class="btn btn-ticker rounded-circle shadow d-flex align-items-center justify-content-center"
+            type="button"
+            id="@Model.ButtonId"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            aria-label="@Model.AriaLabel"
+            style="width: 44px; height: 44px;">
+        <i class="fa-solid fa-filter"></i>
+    </button>
+
+    <div class="dropdown-menu dropdown-menu-end p-3"
+         aria-labelledby="@Model.ButtonId"
+         style="min-width: 18rem; max-height: 70vh; overflow: auto;">
+        @await Html.PartialAsync(Model.ContentPartial, Model.ContentModel)
+    </div>
+</div>
