@@ -1,0 +1,74 @@
+﻿@model DashboardFiltersContentViewModel
+
+<!-- Mode Filter -->
+<div>
+    <label class="filter-label mb-1">@Model.SharedLocalizer["Mode"]</label>
+    <div class="btn-group w-100" role="group">
+        @foreach (var mode in Model.Modes)
+        {
+            <a asp-controller="Dashboard" asp-action="Index"
+               asp-route-timerange="@(Model.CurrentYear.HasValue ? null : Model.CurrentTimerange)"
+               asp-route-tickers="@Model.CurrentTickersString"
+               asp-route-year="@Model.CurrentYear"
+               asp-route-mode="@mode.Key"
+               class="btn btn-ticker btn-sm px-2 py-1 @(mode.Key == Model.CurrentMode ? "active" : "")">
+                @mode.Value
+            </a>
+        }
+    </div>
+</div>
+
+<!-- Timerange Filter (hidden when year is selected) -->
+@if (!Model.CurrentYear.HasValue)
+{
+    <div>
+        <label class="filter-label mb-1">@Model.SharedLocalizer["Period"]</label>
+        <div class="btn-group w-100" role="group">
+            @foreach (var t in Model.Timeranges)
+            {
+                <a asp-controller="Dashboard" asp-action="Index"
+                   asp-route-timerange="@t"
+                   asp-route-tickers="@Model.CurrentTickersString"
+                   asp-route-mode="@Model.CurrentMode"
+                   class="btn btn-ticker btn-sm px-2 py-1 @(t == Model.CurrentTimerange ? "active" : "")">
+                    @t
+                </a>
+            }
+        </div>
+    </div>
+}
+
+<!-- Year Filter -->
+<div>
+    <label class="filter-label mb-1">@Model.SharedLocalizer["Year"]</label>
+    <div class="btn-group w-100" role="group">
+        @{
+            var allYearUrl = Url.Action("Index", "Dashboard", new
+            {
+                timerange = "ALL",
+                tickers = Model.CurrentTickersString,
+                mode = Model.CurrentMode
+                // year omitted intentionally
+            });
+        }
+
+        <a href="@allYearUrl" class="btn btn-ticker btn-sm px-2 py-1 @(Model.CurrentYear == null ? "active" : "")">
+            ALL
+        </a>
+
+        @foreach (var y in Model.Years)
+        {
+            var yearUrl = Url.Action("Index", "Dashboard", new
+            {
+                tickers = Model.CurrentTickersString,
+                year = y,
+                mode = Model.CurrentMode
+                // timerange omitted intentionally when year is selected
+            });
+
+            <a href="@yearUrl" class="btn btn-ticker btn-sm px-2 py-1 @(y == Model.CurrentYear ? "active" : "")">
+                @y
+            </a>
+        }
+    </div>
+</div>

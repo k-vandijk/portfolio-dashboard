@@ -1,0 +1,42 @@
+﻿@model InvestmentFiltersContentViewModel
+
+<div>
+    <label class="filter-label mb-1">@Model.SharedLocalizer["Ticker"]</label>
+    <div class="btn-group w-100" role="group">
+        @foreach (var t in Model.Tickers.Where(t => Model.PieChartLabels.Contains(t))) // filter out tickers not invested in that year
+        {
+            var isActive = Model.SelectedTickers.Contains(t, StringComparer.OrdinalIgnoreCase);
+
+            // Toggle behavior:
+            // - If currently active, clicking removes it.
+            // - If currently inactive, clicking adds it.
+            var nextSelection = isActive
+                ? Model.SelectedTickers.Where(x => !x.Equals(t, StringComparison.OrdinalIgnoreCase))
+                : Model.SelectedTickers.Concat(new[] { t });
+
+            // If the toggle would result in an empty set, pass null so URL omits "tickers"
+            // and we fall back to "all selected" again.
+            var route = nextSelection.Any()
+                ? string.Join(',', nextSelection.Distinct(StringComparer.OrdinalIgnoreCase))
+                : null;
+
+            <a href="@($"{Model.SystemUrlInvestment}?tickers={route}&year={Model.CurrentYear}")"
+               class="btn btn-ticker px-3 py-2 @(isActive ? "active" : "")">
+                @t
+            </a>
+        }
+    </div>
+</div>
+
+<div>
+    <label class="filter-label mb-1">@Model.SharedLocalizer["Year"]</label>
+    <div class="btn-group w-100" role="group">
+        @foreach (var y in Model.Years)
+        {
+            <a href="@($"{Model.SystemUrlInvestment}?tickers={Model.CurrentTickersString}&year={y}")"
+               class="btn btn-ticker px-3 py-2 @(y == Model.CurrentYear ? "active" : "")">
+                @y
+            </a>
+        }
+    </div>
+</div>
