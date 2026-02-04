@@ -45,18 +45,13 @@
 
         <div class="col-12 col-xs-12 col-md-12 col-lg-6 col-xl-8 mb-3 d-flex">
             <div class="row flex-fill">
-                <div class="col-4">
-                    <partial name="Components/_Metric"
-                             model='new MetricViewModel { Title = SharedLocalizer["CurrentPrice"], Value = Model.CurrentPriceString }' />
-                </div>
-                <div class="col-4">
-                    <partial name="Components/_Metric"
-                             model='new MetricViewModel { Title = SharedLocalizer["InterestEur"], Value = Model.InterestString }' />
-                </div>
-                <div class="col-4">
-                    <partial name="Components/_Metric"
-                             model='new MetricViewModel { Title = SharedLocalizer["InterestPct"], Value = Model.InterestPercentageString }' />
-                </div>
+                <partial name="Components/_MarketHistoryMetrics"
+                         model='new MarketHistoryMetricsCardViewModel
+                         {
+                             CurrentPrice = new MetricViewModel { Title = SharedLocalizer["CurrentPrice"], Value = Model.CurrentPriceString },
+                             InterestEur = new MetricViewModel { Title = SharedLocalizer["InterestEur"], Value = Model.InterestString },
+                             InterestPct = new MetricViewModel { Title = SharedLocalizer["InterestPct"], Value = Model.InterestPercentageString }
+                         }' />
             </div>
         </div>
 

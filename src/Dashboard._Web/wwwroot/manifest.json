@@ -1,11 +1,11 @@
 {
-  "name": "Ticker API Dashboard",
+  "name": "Ticker Dashboard",
   "short_name": "Ticker Dashboard",
   "description": "Track and visualize investment portfolio performance",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#EAF7F0",
-  "theme_color": "#4CAF7A",
+  "background_color": "#F5FAFF",
+  "theme_color": "#3B82F6",
   "orientation": "portrait-primary",
   "icons": [
     {
