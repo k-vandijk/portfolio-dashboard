@@ -1,0 +1,22 @@
+@media (min-width: 768px) {
+    #portfolioTable {
+        table-layout: fixed; /* stabiele kolombreedtes, minder layout-jitter */
+        width: 100%;
+    }
+
+        #portfolioTable thead th,
+        #portfolioTable tbody td,
+        #portfolioTable tfoot th,
+        #portfolioTable tfoot td {
+            white-space: nowrap; /* geen wrapping */
+        }
+
+        /* ellipsis als het niet past */
+        #portfolioTable thead th,
+        #portfolioTable tbody td,
+        #portfolioTable tfoot th,
+        #portfolioTable tfoot td {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+}

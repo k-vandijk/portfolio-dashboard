@@ -1,0 +1,66 @@
+.metrics-card-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr; // 3 metrics + 2 dividers
+    align-items: center;
+    height: 100%;
+    gap: 0.75rem;
+}
+
+.metrics-card-item {
+    text-align: center;
+    min-width: 0; // allow ellipsis if needed
+}
+
+.metrics-card-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.metrics-card-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.metrics-card-divider {
+    width: 1px;
+    height: 60%;
+    background: var(--border-color);
+    opacity: 0.9;
+}
+
+/* Mobile: stack nicely */
+@media (max-width: 767.98px) {
+    .metrics-card-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .metrics-card-divider {
+        display: none;
+    }
+
+    .metrics-card-item {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+
+    .metrics-card-title,
+    .metrics-card-value {
+        text-align: left;
+    }
+
+    .metrics-card-value {
+        font-size: 1.2rem;
+    }
+}

@@ -23,5 +23,7 @@
 @use "components/buttons";
 @use "components/tables";
 @use "components/charts";
+@use "components/metrics";
 
 // pages
+@use "pages/dashboard";
